@@ -47,9 +47,7 @@ int middleware_rate_limit_allow(const struct mg_connection *conn)
     unsigned int i;
 
     if (request == NULL)
-    {
         return 1; // Do not reject a request solely because metadata is unavailable
-    }
 
     // Find the existing client's entry, or remember the first unused/expired slot
     for (i = 0; i < RATE_LIMIT_CLIENTS; ++i)

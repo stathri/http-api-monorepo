@@ -88,8 +88,7 @@ int validation_read_json_body(struct mg_connection *conn, char *body, size_t cap
     }
 
     // Enforce the configured limit before reading into the fixed buffer
-    if (request->content_length > (long)API_MAX_BODY_BYTES ||
-        (unsigned long)request->content_length >= (unsigned long)capacity)
+    if (request->content_length > (long)API_MAX_BODY_BYTES || (unsigned long)request->content_length >= (unsigned long)capacity)
     {
         response_error(conn, 413, "Content Too Large", "BODY_TOO_LARGE", "Request body exceeds the allowed size");
         return 0;
