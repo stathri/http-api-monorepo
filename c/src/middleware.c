@@ -55,11 +55,13 @@ int middleware_rate_limit_allow(const struct mg_connection *conn)
     for (i = 0; i < RATE_LIMIT_CLIENTS; ++i)
     {
         struct rate_limit_entry *entry = &entries[i];
+
         if (entry->occupied && strcmp(entry->client_ip, request->remote_addr) == 0)
         {
             available = entry;
             break;
         }
+
         if (!entry->occupied || now - entry->window_started >= (time_t)API_RATE_LIMIT_WINDOW_SECONDS)
         {
             if (available == NULL)
@@ -75,11 +77,12 @@ int middleware_rate_limit_allow(const struct mg_connection *conn)
         available = &entries[0];
     }
 
-    // Start a fresh time window for new clients or expired windows.
+    // Start a fresh time window for new clients or expired windows
     if (!available->occupied || strcmp(available->client_ip, request->remote_addr) != 0 ||
         now - available->window_started >= (time_t)API_RATE_LIMIT_WINDOW_SECONDS)
     {
         (void)snprintf(available->client_ip, sizeof(available->client_ip), "%s", request->remote_addr);
+
         available->window_started = now;
         available->request_count = 0U;
         available->occupied = 1;
@@ -87,5 +90,6 @@ int middleware_rate_limit_allow(const struct mg_connection *conn)
 
     // Count this request and reject requests after the configured threshold
     ++available->request_count;
+
     return available->request_count <= API_RATE_LIMIT_MAX_REQUESTS;
 }
