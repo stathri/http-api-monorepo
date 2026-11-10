@@ -37,5 +37,6 @@ int response_error(struct mg_connection *conn, int status_code,
     (void)snprintf(body, sizeof(body),
                    "{\"error\":{\"code\":\"%s\",\"message\":\"%s\"}}",
                    code, message);
+
     return response_json(conn, status_code, status_text, body);
 }

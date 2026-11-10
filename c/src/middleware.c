@@ -63,21 +63,16 @@ int middleware_rate_limit_allow(const struct mg_connection *conn)
         if (!entry->occupied || now - entry->window_started >= (time_t)API_RATE_LIMIT_WINDOW_SECONDS)
         {
             if (available == NULL)
-            {
                 available = entry;
-            }
         }
     }
 
     // No free slot left, so recycle the first one rather than growing the table
     if (available == NULL)
-    {
         available = &entries[0];
-    }
 
     // Reset the counter if this is a new IP or its minute has run out
-    if (!available->occupied || strcmp(available->client_ip, request->remote_addr) != 0 ||
-        now - available->window_started >= (time_t)API_RATE_LIMIT_WINDOW_SECONDS)
+    if (!available->occupied || strcmp(available->client_ip, request->remote_addr) != 0 || now - available->window_started >= (time_t)API_RATE_LIMIT_WINDOW_SECONDS)
     {
         (void)snprintf(available->client_ip, sizeof(available->client_ip), "%s", request->remote_addr); // snprintf keeps the address inside the fixed-size field
 

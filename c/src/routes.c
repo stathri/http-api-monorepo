@@ -33,9 +33,7 @@ static int route_test(struct mg_connection *conn, void *callback_data)
 
     // POST on the versioned route has a body to validate, so send it to the POST handler
     if (request != NULL && request->request_method != NULL && strcmp(request->request_method, "POST") == 0 && versioning_is_supported_path(request->local_uri))
-    {
         return route_test_post(conn, callback_data);
-    }
 
     (void)callback_data; // Nothing was passed in callback_data that we need here
 
