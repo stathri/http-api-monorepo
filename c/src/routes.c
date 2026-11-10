@@ -1,6 +1,5 @@
 // Archie McVey (Discord: stathri, Roblox: stathri)
 
-#include <stdio.h>
 #include <string.h>
 
 #include "config.h"
