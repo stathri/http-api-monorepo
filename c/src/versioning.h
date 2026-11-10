@@ -3,10 +3,10 @@
 #ifndef VERSIONING_H
 #define VERSIONING_H
 
-// Identify a version-prefixed path and return 1 when its version is supported
+// Check whether a path uses the API version configured in config.h
 int versioning_is_supported_path(const char *path);
 
-// Return 1 if a path looks version-prefixed but does not use the current version
+// Flag version-looking paths that aren't using the version we currently support
 int versioning_is_unsupported_version_path(const char *path);
 
 #endif

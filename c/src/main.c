@@ -11,13 +11,13 @@
 // Initialise CivetWeb, register routes, and stop cleanly when the Enter key is pressed in the terminal
 int main(void)
 {
-    struct mg_callbacks callbacks;
-    struct mg_context *ctx;
+    struct mg_callbacks callbacks; // CivetWeb's optional hooks; none of them need custom behaviour yet
+    struct mg_context *ctx;        // We'll need this handle again when shutting the server down
 
-    // Clear optional callbacks because this application does not override them
+    // Start with a clean callback struct since we're not overriding any CivetWeb hooks
     memset(&callbacks, 0, sizeof(callbacks));
 
-    // Start the HTTP server using the central configuration module
+    // Let the config module supply the server options
     ctx = mg_start(&callbacks, NULL, config_server_options());
 
     if (ctx == NULL)
@@ -26,15 +26,15 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    // Install all application routes after the server has started successfully
+    // Only register routes once CivetWeb has actually started
     routes_register(ctx);
 
     printf("C API listening at http://%s:%s\n", API_HOST, API_PORT);
-    printf("Press Enter to stop the server.\n");
+    printf("Press Enter to stop the server.\n"); // The server stays up until someone asks to stop it
 
-    (void)getchar();
+    (void)getchar(); // Pause here so the server doesn't immediately exit
 
-    // Release server resources before the process exits
+    // Shut CivetWeb down cleanly before leaving main
     mg_stop(ctx);
 
     return EXIT_SUCCESS;

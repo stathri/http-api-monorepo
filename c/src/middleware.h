@@ -3,12 +3,12 @@
 #ifndef MIDDLEWARE_H
 #define MIDDLEWARE_H
 
-#include "civetweb.h"
+#include "civetweb.h" // CivetWeb defines the connection type used below
 
-// Log the method, URI, and client address for each request
+// Write a short line to stdout for each incoming request
 void middleware_log_request(const struct mg_connection *conn);
 
-// Return nonzero when the client's request should be allowed by the local rate limiter
+// Returns 1 while the client is within its request allowance
 int middleware_rate_limit_allow(const struct mg_connection *conn);
 
 #endif

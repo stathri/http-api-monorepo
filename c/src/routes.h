@@ -3,9 +3,9 @@
 #ifndef ROUTES_H
 #define ROUTES_H
 
-#include "civetweb.h"
+#include "civetweb.h" // CivetWeb's server context is used by routes_register
 
-// Register the application's endpoints and the final fallback handler
+// Set up the API routes, including the catch-all handler
 void routes_register(struct mg_context *ctx);
 
 #endif
