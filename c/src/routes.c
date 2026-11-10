@@ -16,7 +16,7 @@ static int require_method(struct mg_connection *conn, const char *expected)
 
     if (request == NULL || request->request_method == NULL || strcmp(request->request_method, expected) != 0)
     {
-        response_error(conn, 405, "Method Not Allowed", "METHOD_NOT_ALLOWED", "HTTP method is not supported for this route");
+        response_error(conn, 405, "Method Not Allowed", "METHOD_NOT_ALLOWED", "HTTP method is not supported for this route"); // Sends 405 JSON error to the browser
         return 0;
     }
 
@@ -39,8 +39,8 @@ static int route_test(struct mg_connection *conn, void *callback_data)
 
     middleware_log_request(conn); // Log it before we start rejecting anything
 
-    if (!middleware_rate_limit_allow(conn)) // Don't run the route if this IP has hit the limit
-        return response_error(conn, 429, "Too Many Requests", "RATE_LIMITED", "Too many requests; try again later");
+    if (!middleware_rate_limit_allow(conn))                                                                          // Don't run the route if this IP has hit the limit
+        return response_error(conn, 429, "Too Many Requests", "RATE_LIMITED", "Too many requests; try again later"); // Sends 429 JSON error to the browser
 
     if (!require_method(conn, "GET")) // This one is a GET route, anything else gets a 405
         return 1;
@@ -54,8 +54,8 @@ static int route_health(struct mg_connection *conn, void *callback_data)
     (void)callback_data;          // Nothing was passed in callback_data that we need here
     middleware_log_request(conn); // Log it before we start rejecting anything
 
-    if (!middleware_rate_limit_allow(conn)) // Don't run the route if this IP has hit the limit
-        return response_error(conn, 429, "Too Many Requests", "RATE_LIMITED", "Too many requests; try again later");
+    if (!middleware_rate_limit_allow(conn))                                                                          // Don't run the route if this IP has hit the limit
+        return response_error(conn, 429, "Too Many Requests", "RATE_LIMITED", "Too many requests; try again later"); // Sends 429 JSON error to the browser
 
     if (!require_method(conn, "GET")) // This one is a GET route, anything else gets a 405
         return 1;
@@ -71,8 +71,8 @@ static int route_test_post(struct mg_connection *conn, void *callback_data)
     (void)callback_data;          // Nothing was passed in callback_data that we need here
     middleware_log_request(conn); // Log it before we start rejecting anything
 
-    if (!middleware_rate_limit_allow(conn)) // Don't run the route if this IP has hit the limit
-        return response_error(conn, 429, "Too Many Requests", "RATE_LIMITED", "Too many requests; try again later");
+    if (!middleware_rate_limit_allow(conn))                                                                          // Don't run the route if this IP has hit the limit
+        return response_error(conn, 429, "Too Many Requests", "RATE_LIMITED", "Too many requests; try again later"); // Sends 429 JSON error to the browser
 
     if (!require_method(conn, "POST")) // Check the method first; there's no point reading a body for the wrong request
         return 1;
@@ -82,7 +82,7 @@ static int route_test_post(struct mg_connection *conn, void *callback_data)
         return 1;
 
     // We only confirm the request was accepted; the supplied body isn't echoed back
-    return response_json(conn, 200, "OK", "{\"message\":\"Request accepted\"}");
+    return response_json(conn, 200, "OK", "{\"message\":\"Request accepted\"}"); // Sends 200 JSON response to the browser
 }
 
 // Anything that didn't match a route ends up here
@@ -95,13 +95,13 @@ static int route_fallback(struct mg_connection *conn, void *callback_data)
 
     middleware_log_request(conn); // Log it before we start rejecting anything
 
-    if (middleware_rate_limit_allow(conn) == 0) // Unknown paths still count towards the same rate limit
-        return response_error(conn, 429, "Too Many Requests", "RATE_LIMITED", "Too many requests; try again later");
+    if (middleware_rate_limit_allow(conn) == 0)                                                                      // Unknown paths still count towards the same rate limit
+        return response_error(conn, 429, "Too Many Requests", "RATE_LIMITED", "Too many requests; try again later"); // Sends 429 JSON error to the browser
 
-    if (versioning_is_unsupported_version_path(path)) // Give unsupported API versions their own error instead of pretending the route doesn't exist
-        return response_error(conn, 400, "Bad Request", "UNSUPPORTED_API_VERSION", "The requested API version is not supported");
+    if (versioning_is_unsupported_version_path(path))                                                                             // Give unsupported API versions their own error instead of pretending the route doesn't exist
+        return response_error(conn, 400, "Bad Request", "UNSUPPORTED_API_VERSION", "The requested API version is not supported"); // Sends 400 JSON error to the browser
 
-    return response_error(conn, 404, "Not Found", "NOT_FOUND", "Route not found");
+    return response_error(conn, 404, "Not Found", "NOT_FOUND", "Route not found"); // Sends 404 JSON error to the browser
 }
 
 // Register the real endpoints first, then let / catch everything else

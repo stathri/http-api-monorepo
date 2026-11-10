@@ -75,35 +75,35 @@ int validation_read_json_body(struct mg_connection *conn, char *body, size_t cap
 
     if (request == NULL)
     {
-        response_error(conn, 400, "Bad Request", "VALIDATION_ERROR", "Request metadata is unavailable");
+        response_error(conn, 400, "Bad Request", "VALIDATION_ERROR", "Request metadata is unavailable"); // Sends 400 JSON error to the browser
         return 0;
     }
 
     // An empty POST isn't useful for this test endpoint
     if (request->content_length <= 0)
     {
-        response_error(conn, 400, "Bad Request", "VALIDATION_ERROR", "A non-empty JSON request body is required");
+        response_error(conn, 400, "Bad Request", "VALIDATION_ERROR", "A non-empty JSON request body is required"); // Sends 400 JSON error to the browser
         return 0;
     }
 
     // Reject oversized bodies before they get anywhere near the buffer
     if (request->content_length > (long)API_MAX_BODY_BYTES || (unsigned long)request->content_length >= (unsigned long)capacity)
     {
-        response_error(conn, 413, "Content Too Large", "BODY_TOO_LARGE", "Request body exceeds the allowed size");
+        response_error(conn, 413, "Content Too Large", "BODY_TOO_LARGE", "Request body exceeds the allowed size"); // Sends 413 JSON error to the browser
         return 0;
     }
 
     // Don't bother reading it if the client sent the wrong content type
     if (!is_json_content_type(content_type))
     {
-        response_error(conn, 415, "Unsupported Media Type", "UNSUPPORTED_MEDIA_TYPE", "Content-Type must be application/json");
+        response_error(conn, 415, "Unsupported Media Type", "UNSUPPORTED_MEDIA_TYPE", "Content-Type must be application/json"); // Sends 415 JSON error to the browser
         return 0;
     }
 
     // If the full body can't be read, return the same validation error
     if (!read_request_body(conn, request->content_length, body, capacity))
     {
-        response_error(conn, 400, "Bad Request", "VALIDATION_ERROR", "Request body could not be read completely");
+        response_error(conn, 400, "Bad Request", "VALIDATION_ERROR", "Request body could not be read completely"); // Sends 400 JSON error to the browser
         return 0;
     }
 
